@@ -1,57 +1,36 @@
-import pandas as pd
 import matplotlib.pyplot as plt
+import pandas as pd
 
-# Load the Iris dataset
+# Reading data
 df = pd.read_csv("iris.csv")
 
-# Check the contents of the DataFrame
-print(df.head())
-print("Columns in the DataFrame:", df.columns)
-print("Missing values in each column:", df.isnull().sum())
-print("Species counts:", df['species'].value_counts())
+# Grouping Data
+df1 = df.groupby("variety")[["sepal.length","sepal.width"]]
+sepal_length_array = {}
+sepal_width_array = {}
 
-# Ensure no leading/trailing spaces in column names
-df.columns = df.columns.str.strip()
+for name,group in df1 :
+    sepal_length_array[name] = group["sepal.length"].values
+    sepal_width_array[name] = group["sepal.width"].values
 
-# 1. Scatter plot of sepal length vs sepal width colored by species
-plt.figure(figsize=(10, 6))
-species_colors = {'setosa': 'blue', 'versicolor': 'orange', 'virginica': 'green'}
+# Generating arrays for datasets
+x_axis_setosa = sepal_length_array["Setosa"]
+y_axis_setosa = sepal_width_array["Setosa"]
 
-# Plot each species with a different color
-for species, color in species_colors.items():
-    subset = df[df['species'] == species]
-    plt.scatter(subset['sepal.length'], subset['sepal.width'], 
-                color=color, label=species, s=100)
+x_axis_versicolor = sepal_length_array["Versicolor"]
+y_axis_versicolor = sepal_width_array["Versicolor"]
 
-plt.title('Sepal Length vs Sepal Width')
-plt.xlabel('Sepal Length (cm)')
-plt.ylabel('Sepal Width (cm)')
-plt.legend(title='Species')
+x_axis_virginica = sepal_length_array["Virginica"]
+y_axis_virginica = sepal_width_array["Virginica"]
+
+# Plotting graph
+plt.scatter(x_axis_setosa, y_axis_setosa, color="red", label="Setosa")
+plt.scatter(x_axis_versicolor, y_axis_versicolor, color="green", label="Versicolor")
+plt.scatter(x_axis_virginica, y_axis_virginica, color="blue", label="Virginica")
+plt.xticks()
+plt.xlabel("Sepal Length")
+plt.ylabel("Sepal Width")
+plt.title("Variation between Sepal Length and Width in three varities of Iris")
+plt.legend()
 plt.grid(True)
-plt.show()
-
-# 2. Histogram of petal lengths
-plt.figure(figsize=(10, 6))
-plt.hist(df['petal.length'], bins=20, color='skyblue', edgecolor='black')
-plt.title('Distribution of Petal Lengths')
-plt.xlabel('Petal Length (cm)')
-plt.ylabel('Frequency')
-plt.grid(axis='y')
-plt.show()
-
-# 3. Box plots comparing distributions of each feature for different species
-features = ['sepal.length', 'sepal.width', 'petal.length', 'petal.width']
-
-plt.figure(figsize=(15, 10))
-
-for i, feature in enumerate(features):
-    plt.subplot(2, 2, i + 1)
-    # Create a box plot for each feature
-    df.boxplot(column=feature, by='species', grid=False)
-    plt.title(f'Box Plot of {feature.replace(".", " ").title()} by Species')
-    plt.suptitle('')  # Suppress the default title
-    plt.xlabel('Species')
-    plt.ylabel(feature.replace(".", " ").title())
-
-plt.tight_layout()
 plt.show()
