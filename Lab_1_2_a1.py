@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 iris_dataset = pd.read_csv("iris.csv")
+# Sturges' rule for 
 k = int(np.ceil(np.log2(len(iris_dataset))+1))
 
 # Plotting graph
